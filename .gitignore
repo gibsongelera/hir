@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
+
+# Local user uploads (not for version control)
+hub1/uploads/profiles/*
+!hub1/uploads/profiles/.gitkeep

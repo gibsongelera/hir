@@ -1,0 +1,598 @@
+/* ============================================================
+   ZPPSU Admin Panel — Maroon & Gold Theme
+   ============================================================ */
+
+/* ===== Admin Layout ===== */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ===== Sidebar ===== */
+.admin-sidebar {
+    width: 260px;
+    background: linear-gradient(180deg, var(--maroon-dark) 0%, var(--maroon) 60%, var(--maroon-mid) 100%);
+    min-height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    overflow-y: auto;
+    box-shadow: 4px 0 24px rgba(115, 0, 0, 0.35);
+    border-right: 1px solid rgba(255, 189, 0, 0.15);
+    transition: width 0.3s ease;
+}
+
+/* Sidebar subtle gold shimmer line */
+.admin-sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* Brand / Logo */
+.admin-sidebar .sidebar-brand {
+    background: rgba(0, 0, 0, 0.25);
+    border-bottom: 2px solid rgba(255, 189, 0, 0.5) !important;
+    padding: 1.4rem 1.5rem !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-sidebar .sidebar-brand::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 10%;
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+}
+
+/* Nav Links */
+.admin-sidebar .nav-link {
+    padding: 13px 24px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.92rem;
+    border-radius: 0;
+    color: rgba(255, 255, 255, 0.75) !important;
+    border-left: 3px solid transparent;
+    transition: all 0.25s cubic-bezier(.4, 0, .2, 1);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.2px;
+}
+
+/* Hover ripple shimmer */
+.admin-sidebar .nav-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 189, 0, 0.08), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+}
+
+.admin-sidebar .nav-link:hover::before {
+    transform: translateX(100%);
+}
+
+.admin-sidebar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-left-color: var(--gold-bright);
+    color: var(--gold-bright) !important;
+    padding-left: 30px;
+}
+
+.admin-sidebar .nav-link i {
+    width: 20px;
+    text-align: center;
+    margin-right: 10px;
+    transition: transform 0.25s ease;
+}
+
+.admin-sidebar .nav-link:hover i {
+    transform: scale(1.2);
+}
+
+/* Active link */
+.admin-sidebar .active-link {
+    background: rgba(255, 189, 0, 0.15) !important;
+    border-left-color: var(--gold-bright) !important;
+    color: var(--gold-bright) !important;
+    font-weight: 700 !important;
+    padding-left: 30px;
+}
+
+.admin-sidebar .active-link::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 60%;
+    background: var(--gold-bright);
+    border-radius: 4px 0 0 4px;
+}
+
+.admin-sidebar .active-link i {
+    transform: scale(1.15);
+}
+
+/* Sidebar section labels */
+.sidebar-section-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 189, 0, 0.55);
+    padding: 18px 24px 6px;
+    margin-top: 8px;
+}
+
+/* ===== Main Content ===== */
+.admin-main {
+    margin-left: 260px;
+    flex: 1;
+    background: var(--body-bg);
+    min-height: 100vh;
+}
+
+/* ===== Topbar ===== */
+.admin-topbar {
+    background: #fff;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 16px rgba(115, 0, 0, 0.07);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    border-bottom: 2px solid var(--maroon-light);
+}
+
+.admin-topbar::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--maroon), var(--gold), var(--maroon));
+    background-size: 200% 100%;
+    animation: topbar-shimmer 4s linear infinite;
+}
+
+@keyframes topbar-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.admin-topbar h4 {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--maroon-dark);
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin: 0;
+    letter-spacing: 0.3px;
+}
+
+/* ===== Admin Content Area ===== */
+.admin-content {
+    padding: 2rem;
+}
+
+/* ===== Chart Cards ===== */
+.chart-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.6rem;
+    box-shadow: 0 4px 24px rgba(115, 0, 0, 0.09);
+    border-left: 4px solid var(--maroon);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.chart-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(255, 189, 0, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.chart-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(115, 0, 0, 0.14);
+}
+
+.chart-card h5 {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--maroon-dark);
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+}
+
+/* Gold-accented chart card variant */
+.chart-card--gold {
+    border-left-color: var(--gold);
+}
+
+.chart-card--gold h5 {
+    color: var(--gold-dark);
+}
+
+/* ===== Analytics Value ===== */
+.analytics-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: var(--maroon);
+    line-height: 1;
+}
+
+.analytics-value--gold {
+    color: var(--gold-dark);
+}
+
+/* ===== Progress Bar ===== */
+.progress-bar {
+    background: linear-gradient(90deg, var(--maroon), var(--maroon-mid));
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.25) 50%, transparent 100%);
+    animation: progress-shine 2s ease-in-out infinite;
+}
+
+@keyframes progress-shine {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* ===== Admin Buttons ===== */
+
+/* Base admin button — maroon */
+.btn-admin {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    padding: 10px 22px;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.22s cubic-bezier(.34, 1.56, .64, 1),
+        box-shadow 0.22s ease,
+        background 0.22s ease;
+    letter-spacing: 0.2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Ripple wave on click */
+.btn-admin::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, transparent 65%);
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.45s ease, opacity 0.45s ease;
+    border-radius: inherit;
+}
+
+.btn-admin:active::after {
+    transform: scale(2.5);
+    opacity: 1;
+    transition: 0s;
+}
+
+/* Maroon primary button */
+.btn-admin-primary {
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(115, 0, 0, 0.3);
+}
+
+.btn-admin-primary:hover {
+    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon) 100%);
+    color: #fff;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 28px rgba(115, 0, 0, 0.4);
+}
+
+.btn-admin-primary:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Gold action button */
+.btn-admin-gold {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(255, 189, 0, 0.3);
+}
+
+.btn-admin-gold:hover {
+    background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+    color: #fff;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 28px rgba(255, 189, 0, 0.45);
+}
+
+.btn-admin-gold:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Outline maroon */
+.btn-admin-outline {
+    background: transparent;
+    border: 2px solid var(--maroon);
+    color: var(--maroon);
+    box-shadow: none;
+}
+
+.btn-admin-outline:hover {
+    background: var(--maroon);
+    color: #fff;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 22px rgba(115, 0, 0, 0.25);
+}
+
+.btn-admin-outline:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Danger button */
+.btn-admin-danger {
+    background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(185, 28, 28, 0.3);
+}
+
+.btn-admin-danger:hover {
+    background: linear-gradient(135deg, #991b1b 0%, #b91c1c 100%);
+    color: #fff;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 28px rgba(185, 28, 28, 0.4);
+}
+
+.btn-admin-danger:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Icon pulse on hover */
+.btn-admin i,
+.btn-admin .fas,
+.btn-admin .far {
+    transition: transform 0.25s cubic-bezier(.34, 1.56, .64, 1);
+}
+
+.btn-admin:hover i,
+.btn-admin:hover .fas,
+.btn-admin:hover .far {
+    transform: scale(1.25) rotate(-5deg);
+}
+
+/* Small button variant */
+.btn-admin-sm {
+    padding: 7px 15px;
+    font-size: 0.82rem;
+    border-radius: 8px;
+}
+
+/* ===== Admin Table ===== */
+.admin-table thead th {
+    background: linear-gradient(90deg, var(--maroon-dark), var(--maroon));
+    color: #fff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    padding: 13px 16px;
+}
+
+.admin-table tbody tr {
+    transition: background 0.15s ease;
+    border-bottom: 1px solid var(--gray-light);
+}
+
+.admin-table tbody tr:hover {
+    background: var(--maroon-light);
+}
+
+/* ===== Admin Stat Cards ===== */
+.admin-stat-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem 1.6rem;
+    box-shadow: 0 4px 20px rgba(115, 0, 0, 0.08);
+    border-top: 4px solid var(--maroon);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.admin-stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 70px;
+    height: 70px;
+    background: radial-gradient(circle, var(--maroon-muted) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 40px rgba(115, 0, 0, 0.14);
+}
+
+.admin-stat-card--gold {
+    border-top-color: var(--gold);
+}
+
+.admin-stat-card__icon {
+    width: 50px;
+    height: 50px;
+    background: var(--maroon-light);
+    color: var(--maroon);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    transition: all 0.25s ease;
+}
+
+.admin-stat-card:hover .admin-stat-card__icon {
+    background: var(--maroon);
+    color: #fff;
+    transform: rotate(-8deg) scale(1.1);
+}
+
+.admin-stat-card--gold .admin-stat-card__icon {
+    background: var(--gold-light);
+    color: var(--gold-dark);
+}
+
+.admin-stat-card--gold:hover .admin-stat-card__icon {
+    background: var(--gold);
+    color: #fff;
+}
+
+/* ===== Admin Badges ===== */
+.badge-admin {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 4px 12px;
+    border-radius: 50px;
+}
+
+.badge-admin-maroon {
+    background: var(--maroon-light);
+    color: var(--maroon);
+}
+
+.badge-admin-gold {
+    background: var(--gold-light);
+    color: var(--gold-dark);
+}
+
+.badge-admin-success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-admin-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* ===== Sidebar avatar / user block ===== */
+.sidebar-user {
+    padding: 1rem 1.4rem;
+    border-top: 1px solid rgba(255, 189, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.sidebar-user__avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    object-fit: cover;
+    box-shadow: 0 0 0 3px rgba(255, 189, 0, 0.2);
+    flex-shrink: 0;
+}
+
+.sidebar-user__name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.2;
+}
+
+.sidebar-user__role {
+    font-size: 0.72rem;
+    color: var(--gold-bright);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 992px) {
+    .admin-sidebar {
+        width: 220px;
+    }
+
+    .admin-main {
+        margin-left: 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar {
+        width: 100%;
+        min-height: auto;
+        position: relative;
+        box-shadow: 0 4px 16px rgba(115, 0, 0, 0.3);
+    }
+
+    .admin-main {
+        margin-left: 0;
+    }
+
+    .admin-layout {
+        flex-direction: column;
+    }
+
+    .admin-content {
+        padding: 1rem;
+    }
+
+    .admin-topbar {
+        padding: 0.85rem 1.2rem;
+    }
+}
