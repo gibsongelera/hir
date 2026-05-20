@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hub-app-web
+    ports:
+      - "80:80"
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=root
+      - DATABASE_NAME=campus_relief_hub
+    volumes:
+      - ./hub1/uploads:/var/www/html/hub1/uploads
+      - ./hub1:/var/www/html/hub1
+    depends_on:
+      - db
+    networks:
+      - hub-network
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: hub-app-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: campus_relief_hub
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./hub1/database/campus_relief_hub.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - hub-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:
+
+networks:
+  hub-network:
+    driver: bridge
