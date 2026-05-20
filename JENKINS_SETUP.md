@@ -1,150 +1,201 @@
 # Jenkins Configuration for HUB Application
 
-## Prerequisites
-- Jenkins 2.375+
-- Docker and Docker CLI installed on Jenkins agent
-- Git plugin
-- Pipeline plugin
+## Quick Start - Docker Setup
 
-## Setup Instructions
+### Start Jenkins with Docker Compose
 
-### 1. Add Jenkins Credentials
+```bash
+# Navigate to project directory
+cd c:\xampp\htdocs\hub2
 
-1. Go to **Jenkins Dashboard** → **Manage Jenkins** → **Manage Credentials**
-2. Click **Global** under **Stores scoped to Jenkins**
-3. Click **Add Credentials** (top left)
-4. Select **Secret text** from the dropdown
-5. Paste the API Token: `8a8e5625aeba705a5205f55f5ac06717`
-6. Set the ID as: `jenkins-api-token-8a8e5625aeba705a5205f55f5ac06717`
-7. Set Description: `Jenkins API Token for HUB Application`
-8. Click **Create**
+# Start all services (Jenkins, App, Database)
+docker-compose up -d
 
-### 2. Create a New Pipeline Job
+# View Jenkins logs
+docker-compose logs -f jenkins
+```
 
-1. Go to **Jenkins Dashboard** → **New Item**
-2. Enter job name: `hub-app-pipeline`
+Jenkins will be available at: **http://localhost:9090**
+
+### Get Jenkins Initial Admin Password
+
+```bash
+# View the initial setup password
+docker-compose exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+```
+
+This password is needed for first-time setup in the web UI.
+
+## Manual Setup (If not using Docker Compose)
+
+### Prerequisites
+- Docker and Docker Compose installed
+- Port 9090 available on your machine
+
+### 1. Build and Start Jenkins
+
+```powershell
+# PowerShell - Navigate to project directory
+cd c:\xampp\htdocs\hub2
+
+# Build custom Jenkins image with Docker support
+docker build -f Dockerfile.jenkins -t hub-jenkins:latest .
+
+# Run Jenkins container with Docker socket mounted
+docker run -d `
+  --name hub-app-jenkins `
+  -p 9090:8080 `
+  -p 50000:50000 `
+  -v jenkins-data:/var/jenkins_home `
+  -v /var/run/docker.sock:/var/run/docker.sock `
+  -v /usr/bin/docker:/usr/bin/docker `
+  --restart unless-stopped `
+  hub-jenkins:latest
+
+# Get initial admin password
+docker logs hub-app-jenkins | Select-String "initialAdminPassword"
+```
+
+### 2. Initial Jenkins Setup (Web UI)
+
+1. Open http://localhost:9090
+2. Copy the initial admin password from logs
+3. Complete the setup wizard:
+   - Unlock Jenkins
+   - Create Admin User
+   - Install suggested plugins
+   - Configure Instance
+
+### 3. Add API Token Credential
+
+1. Go to **Manage Jenkins** → **Manage Users**
+2. Click on your admin user
+3. Click **Configure** (or **API Token** tab)
+4. Click **Add new Token**
+5. Name it: `hub-app-token`
+6. Copy the generated token
+7. Add it to Jenkins credentials:
+   - Go to **Manage Jenkins** → **Manage Credentials**
+   - Click **Global** under "Stores scoped to Jenkins"
+   - Click **Add Credentials**
+   - Type: **Secret text**
+   - Secret: `8a8e5625aeba705a5205f55f5ac06717` (or your actual token)
+   - ID: `jenkins-api-token`
+   - Save
+
+### 4. Create Pipeline Job
+
+1. Click **+ New Item**
+2. Enter name: `hub-app-pipeline`
 3. Select **Pipeline**
 4. Click **OK**
+5. Under "Pipeline":
+   - Select: **Pipeline script from SCM**
+   - SCM: **Git**
+   - Repository URL: `https://github.com/gibsongelera/hir.git`
+   - Branch: `*/main`
+   - Script Path: `Jenkinsfile`
+6. Save
 
-### 3. Configure Pipeline
+### 5. Trigger Build
 
-In the Pipeline configuration:
+**Option A: Web UI**
+- Go to `hub-app-pipeline` job
+- Click **Build Now**
 
-- **Pipeline script from SCM**: Git
-- **Repository URL**: `https://github.com/gibsongelera/hir.git`
-- **Branch**: `*/main`
-- **Script Path**: `Jenkinsfile`
+**Option B: Jenkins API (PowerShell)**
 
-### 4. Build Triggers
+```powershell
+$token = "your-api-token"
+$username = "admin"  # your Jenkins username
+$jenkinsUrl = "http://localhost:9090"
+$jobName = "hub-app-pipeline"
 
-Add triggers to automatically run the pipeline:
-- **Poll SCM**: `H/15 * * * *` (every 15 minutes)
-- **GitHub hook trigger**: If you have GitHub webhook configured
-- **Manual trigger**: Via build button
+# Create auth header
+$base64 = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${username}:${token}"))
+$headers = @{"Authorization" = "Basic $base64"}
 
-## Docker Setup
+# Get CSRF crumb
+$crumbUrl = "$jenkinsUrl/crumbIssuer/api/json"
+$crumb = (Invoke-WebRequest -Uri $crumbUrl -Headers $headers -UseBasicParsing).Content | ConvertFrom-Json
 
-### Option 1: Using Docker Compose (Local Testing)
+# Trigger build
+$buildUrl = "$jenkinsUrl/job/$jobName/build"
+$buildHeaders = $headers + @{$crumb.crumbRequestField = $crumb.crumb}
 
-```bash
-docker-compose up -d
+Invoke-WebRequest -Uri $buildUrl -Method POST -Headers $buildHeaders -UseBasicParsing
+Write-Host "Build triggered!"
 ```
 
-This will:
-- Build the PHP application Docker image
-- Start Apache web server on port 80
-- Start MySQL database
-- Initialize database from SQL file
+## Docker Networking
 
-### Option 2: Using Docker CLI
-
-```bash
-# Build image
-docker build -t hub-app:latest .
-
-# Run container
-docker run -d \
-  --name hub-app-container \
-  -p 80:80 \
-  -e DATABASE_HOST=localhost \
-  -e DATABASE_USER=root \
-  -e DATABASE_PASSWORD=root \
-  -e DATABASE_NAME=campus_relief_hub \
-  hub-app:latest
-```
-
-## Remote Execution
-
-The Jenkinsfile is configured for remote execution via Jenkins API:
-
-### Using Jenkins API to Trigger Build
-
-```bash
-# Using API token authentication
-curl -X POST http://localhost:9090/job/hub-app-pipeline/build \
-  -H "Authorization: Bearer 8a8e5625aeba705a5205f55f5ac06717"
-```
-
-### Using Basic Auth with Jenkins Username
-
-```bash
-curl -X POST http://localhost:9090/job/hub-app-pipeline/buildWithParameters \
-  -u username:8a8e5625aeba705a5205f55f5ac06717 \
-  -F token=hub-app-trigger
-```
-
-## Environment Variables (Optional)
-
-Create a `.env` file in the project root to override defaults:
-
-```bash
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=campus_relief_hub
-```
-
-## Accessing the Application
-
-After successful deployment:
-- **Web Application**: http://localhost/hub1/
-- **Admin Panel**: http://localhost/hub1/admin/
-- **Login Page**: http://localhost/hub1/auth/login.php
+Jenkins can access other services via their container names:
+- **Web App**: http://web (or http://web/hub1 for application)
+- **Database**: db:3306 (hostname: `db`)
 
 ## Troubleshooting
 
-### Docker Build Fails
-- Ensure PHP 8.2 image is available
-- Check Docker daemon is running
-- Verify all dependencies in Dockerfile are correct
+### Jenkins won't start
+```bash
+# Check logs
+docker-compose logs jenkins
 
-### Pipeline Fails to Connect to Database
-- Ensure MySQL container is running
-- Check database credentials in environment variables
-- Verify database initialization SQL file exists
+# Restart
+docker-compose restart jenkins
 
-### Port 80 Already in Use
-- Stop the XAMPP Apache server: `apache_stop.bat`
-- Or use a different port: Change `80:80` to `8080:80`
+# Rebuild image if needed
+docker-compose build --no-cache jenkins
+```
+
+### Jenkins can't access Docker
+- Verify Docker socket is mounted: `/var/run/docker.sock:/var/run/docker.sock`
+- Check jenkins user is in docker group in Dockerfile
+- Restart Jenkins container
+
+### Port 9090 already in use
+Change in docker-compose.yml:
+```yaml
+ports:
+  - "8080:8080"  # Use 8080 instead of 9090
+```
+
+### Can't trigger builds via API
+1. Verify API token in credentials
+2. Check user has build trigger permissions
+3. Ensure CSRF crumb is included (see PowerShell script above)
+4. Verify job exists and is configured correctly
 
 ## File Structure
 
 ```
-.
-├── Dockerfile              # Docker image configuration
-├── docker-compose.yml      # Docker Compose configuration
-├── Jenkinsfile            # Jenkins CI/CD pipeline
-├── .dockerignore           # Docker ignore file
-├── JENKINS_SETUP.md        # This file
-├── hub1/                   # Main application
-├── config/                 # Database configuration
-└── database/               # SQL initialization files
+├── Dockerfile              # PHP application container
+├── Dockerfile.jenkins      # Jenkins container with Docker support
+├── docker-compose.yml      # Multi-service orchestration
+├── Jenkinsfile            # Pipeline definition
+├── init-jenkins.sh        # Jenkins initialization script
+├── JENKINS_SETUP.md       # This file
+└── hub1/                  # Application code
 ```
+
+## Environment Variables
+
+Edit `docker-compose.yml` to customize:
+- `JENKINS_OPTS`: Jenkins startup options
+- `DATABASE_HOST`, `DATABASE_USER`, etc.: App database settings
 
 ## Next Steps
 
-1. Commit these files to GitHub
-2. Set up Jenkins credentials with the API token
-3. Create and configure the pipeline job
-4. Run the first build manually to test
-5. Configure build triggers for automated deployments
+1. ✅ Start services: `docker-compose up -d`
+2. ✅ Access Jenkins: http://localhost:9090
+3. ✅ Get admin password: `docker-compose logs jenkins`
+4. ✅ Complete setup wizard
+5. ✅ Add API credentials
+6. ✅ Create pipeline job
+7. ✅ Test build trigger
+
+## Support
+
+For issues, check:
+- Jenkins logs: `docker-compose logs jenkins`
+- Docker container status: `docker ps`
+- Network connectivity: `docker network inspect hub-network`
