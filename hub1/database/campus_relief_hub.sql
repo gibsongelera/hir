@@ -1,9 +1,5 @@
 -- Campus Relief Hub Database Schema
--- Run this in phpMyAdmin or MySQL CLI
-
-CREATE DATABASE IF NOT EXISTS campus_relief_hub CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-USE campus_relief_hub;
+-- Imported into: if0_41802178_campusrelief_db
 
 -- Users table (students + admin)
 CREATE TABLE IF NOT EXISTS users (

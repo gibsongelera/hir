@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../config/constants.php';
 session_start();
 $_SESSION = [];
 if (ini_get("session.use_cookies")) {
@@ -6,5 +7,5 @@ if (ini_get("session.use_cookies")) {
     setcookie(session_name(), '', time() - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
 }
 session_destroy();
-header('Location: /hub2/hub1/auth/login.php');
+header('Location: ' . APP_URL . '/auth/login.php');
 exit;

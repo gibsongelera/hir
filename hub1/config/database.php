@@ -1,8 +1,8 @@
 <?php
-$db_host = 'localhost';
-$db_name = 'campus_relief_hub';
-$db_user = 'root';
-$db_pass = '';
+$db_host = 'sql110.infinityfree.com';
+$db_name = 'if0_41802178_campusrelief_db';
+$db_user = 'if0_41802178';
+$db_pass = 'lPqw1i7u9b6jUx';
 
 try {
     $pdo = new PDO(
@@ -16,5 +16,5 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    die("Database connection failed. Please import database/campus_relief_hub.sql in phpMyAdmin.");
+    die("DB Error: " . $e->getMessage());
 }
